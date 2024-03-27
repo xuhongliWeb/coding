@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title></title>
 </head>
 <body>
-    <div class="app"></div>
+    <div class="app" id="app">
+        <div>{{msg}}</div>
+    </div>
+    <script type="module">
+        import Vue from './js/vue.js'
+        let vm = new Vue({
+            el: '#app',
+            data: {
+                todos: [{
+                text: '学习 JavaScript'
+            }, {
+                text: '学习 Vue'
+            }, {
+                text: '整个牛项目'
+            }],
+                msg: 'msg123',
+                age: 21
+            }
+        })
+        console.log(vm,'vm')
+        console.log(vm.msg,'msg')
+    </script>
 </body>
 </html>

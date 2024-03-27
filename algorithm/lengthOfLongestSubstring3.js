@@ -36,4 +36,24 @@ var lengthOfLongestSubstring = function(s) {
     return res;
 };
 
-lengthOfLongestSubstring("abcabcbb")
+var lengthOfLongestSubstring2 = function (s) {
+    let left = 0,j = 0,maxLength = 0
+    let set = new Set()
+    for (let i = 0;i <s.length;i++) {
+        if (!set.has(s[i])) {
+            set.add(s[i])
+            maxLength = Math.max(maxLength,set.size)
+        }else {
+            while (set.has(s[i])) {
+                set.delete(s[j])
+                j++
+            }
+            set.add(s[i])
+        }
+    }
+    return maxLength
+}
+
+console.log(lengthOfLongestSubstring2("abcabcbb"))
+
+
