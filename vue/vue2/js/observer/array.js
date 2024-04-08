@@ -3,6 +3,7 @@ import { def } from "../utils/index.js";
 
 // 取原生数组的原型 
 
+
 const arrayProto = Array.prototype;
 console.log(arrayProto, 'arrayProto')
 // 创建个新的对象，修改该对象上的7个数组方法，防止污染原生数组
