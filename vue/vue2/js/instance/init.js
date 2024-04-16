@@ -26,6 +26,13 @@ export function initMixin(Vue) {
         // 3. computed 生成 getter setter 生成一个watcher ， 但不执行， 返回一个闭包
         // 4.methods 对象，生成闭包，先不执行
         initState(vm);
+
+        // 挂载组件，带模板编译
+
+        if (vm.$options.el) {
+            vm.$mount(vm.$options.el);
+        }
+
     }
  
 }

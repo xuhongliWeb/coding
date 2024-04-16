@@ -3,23 +3,21 @@
 
 import { hasOwn, isObject, isPlainObject, def } from "../utils/index.js";
 import Dep from "./dep.js";
+import { arrayMethods } from "./array.js";
+const arrayKeys = Object.getOwnPropertyNames(arrayMethods);
 class Observer {
     constructor(value) {
         this.dep = new Dep();
         this.vmCount = 0;
         //  将 Observer 的实例保存到 data 的 __ob__ 属性上， 用于 observer 的时候检测
         def(value, "__ob__", this);
-        console.log("Observer", value);
         // defineReactive childOb 递归 进数组这里
         if (Array.isArray(value)) {
             // 增强、重写数组方法
-
-            protoAugment()
+            protoAugment(value, arrayMethods, arrayKeys);
 
             /*如果是数组则需要遍历数组的每一个成员进行observe*/
-            observeArray(value)
-
-
+            observeArray(value);
         } else {
             this.walk(value);
         }
@@ -36,16 +34,20 @@ class Observer {
     }
 }
 
+// 直接覆盖原型的方法来修改目标对象
+
+function protoAugment(target, src) {
+    target.__proto__ = src;
+}
 
 // 对数组的没个成员进行绑定
 function observeArray(items) {
-    for (let i =0,l=items.length; i < l; i++) {
+    for (let i = 0, l = items.length; i < l; i++) {
         observe(items[i]);
     }
 }
 
 export function observe(value, assRootData) {
-
     if (!isObject(value)) {
         return;
     }
@@ -55,7 +57,6 @@ export function observe(value, assRootData) {
     // 检测是否已经进行过绑定
 
     if (hasOwn(value, "__ob__")) {
-        console.log("已经有ob");
     } else if (Array.isArray(value) || isPlainObject(value)) {
         ob = new Observer(value);
     }
@@ -73,7 +74,7 @@ export function defineReactive(obj, key, val) {
     let dep = new Dep();
 
     // 如果子元素是数组， 跑到O
-    let childOb = observe(val)
+    let childOb = observe(val);
     // 获取 defineProperty 的 getter 和 setter
     // getOwnPropertyDescriptor 返回接存在于对象上而不在对象的原型链中的属性
     let property = Object.getOwnPropertyDescriptor(obj, key);
@@ -86,9 +87,7 @@ export function defineReactive(obj, key, val) {
         configurable: true,
         get: function reactiveGetter() {
             // 如果原本有 geeter 方法则执行
-
             const value = getter ? getter.call(obj) : val;
-
             // 进行依赖收集
             // 获取值的时候 有 watcher 依赖 把 watcher 对象加入到data 的 dep 中
             if (Dep.target) {
@@ -111,7 +110,6 @@ export function defineReactive(obj, key, val) {
             } else {
                 val = newVal;
             }
-
 
             /*dep对象通知所有的观察者*/
             dep.notify();

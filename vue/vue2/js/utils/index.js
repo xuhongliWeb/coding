@@ -31,3 +31,29 @@ export function remove(arr, item) {
         }
     }
 }
+
+
+export function query(el) {
+    if (typeof el === 'string') {
+        // 字符串 id class 等
+        const selector = document.querySelector(el);
+        if (!selector) {
+            console.warn('querySelector 未找到元素');
+            return document.createElement('div');
+        }
+        return selector;
+    }else {
+        // 元素
+        return el;
+    }
+}
+
+export function getOuterHTML(el) {
+    if (el.outerHTML) {
+        return el.outerHTML;
+    }else {
+        const container = document.createElement('div');
+        container.appendChild(el.cloneNode(true));
+        return container.innerHTML; // 本身的html
+    }
+}
