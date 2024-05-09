@@ -1,25 +1,14 @@
-import { parse } from "./parser/index.js"
-
-const baseOptions = {}
-
-// 编译，将模板template编译成AST树、render函数以及staticRenderFns函数
-function createCompiler(options) {
-
-    function compile(template, options) {
-
-        // 合并配置
+import { parseHTML } from "./parser/html-parser.js";
 
 
-        // 基础模板编译，得到编译结果
+export function compileToFunctions(template) {
+    // html - render 函数
+    // ast 是描述语言本身的对象，描述语言本身的
+    // 1. 需要将html 代码转化为ast - render 语法树
 
-        const ast = parse(template.trim(), options) // 将模板编译成AST树
-    }
+    console.log(template, "template");
 
-    return {
-        compile,
-    }
+    let ast = parseHTML(template);
+    console.log(ast, "ast");
 }
 
-const {compile,compileToFunctions} = createCompiler(baseOptions)
-
-export {compile,compileToFunctions}
