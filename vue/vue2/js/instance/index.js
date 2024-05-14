@@ -10,7 +10,6 @@ function Vue(options) {
     this._init(options);
 }
 
-console.log('Vue',Vue.prototype)
 initMixin(Vue)
 
 export default Vue;

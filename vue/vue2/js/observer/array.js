@@ -31,7 +31,6 @@ export const arrayMethods = Object.create(arrayProto);
         args[i] = arguments[i]
       }
 
-      console.log(arguments,'argument')
       /*调用原生的数组方法*/
       const result = original.apply(this, args)
   

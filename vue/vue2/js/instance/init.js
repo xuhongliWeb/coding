@@ -52,7 +52,6 @@ export function initMixin(Vue) {
 
 
     Vue.prototype.$mount = function (el) {
-        console.log(el,'mount')
         // 挂载操作
 
         const vm = this
