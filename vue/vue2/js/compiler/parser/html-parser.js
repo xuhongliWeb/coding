@@ -53,7 +53,6 @@ export function parseHTML(html, options) {
             }
 
             const endTagMatch = html.match(endTag);
-            console.log(endTagMatch, "endTagMatch");
             if (endTagMatch) {
                 // 如果匹配到了结束标签
                 advance(endTagMatch[0].length);
@@ -108,8 +107,6 @@ export function parseHTML(html, options) {
     }
 
     function start(tagName, attrs) {
-        console.log(tagName, "start");
-        console.log(attrs, "attrs-start");
         let elemet = createASTElement(tagName, attrs);
         if (!root) {
             root = elemet;
@@ -119,7 +116,6 @@ export function parseHTML(html, options) {
     }
 
     function end(tagName) {
-        console.log(tagName, "end");
         let element = stack.pop(); // 取出栈中最后一个
         currentParent = stack[stack.length - 1];
         if (currentParent) { // 如果有父节点
@@ -129,7 +125,6 @@ export function parseHTML(html, options) {
     }
 
     function chars(text) {
-        console.log(text, "chars");
         text = text.replace(/\s/g, "");
         if (text) { // 去掉空格 保存文本
             currentParent.children.push({
