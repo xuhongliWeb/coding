@@ -2,8 +2,6 @@
 
 export function path(oldVnode, vnode) {
     // 将虚拟节点转换为真实节点
-    console.log(oldVnode, "patch");
-    console.log(vnode, "vnode-patch");
     const el = createElm(vnode); // 产生真实的dOm
     const parentElm = oldVnode.parentNode; // 获取父节点
     parentElm.insertBefore(el, oldVnode.nextSibling); // 插入到老节点的后面
@@ -15,6 +13,7 @@ function createElm(vnode) { // 创建真实节点
 
     if (typeof tag === "string") { // 元素
         vnode.el = document.createElement(tag);
+        undateProperties(vnode); // 设置属性
         children.forEach((element) => { // 递归创建子节点
             vnode.el.appendChild(createElm(element)); // 创建子节点
         });
@@ -23,4 +22,19 @@ function createElm(vnode) { // 创建真实节点
     }
 
     return vnode.el;
+}
+
+
+function undateProperties(vnode) {
+    let newProps = vnode.data || {};
+    let el = vnode.el;
+    for (let key in newProps) {
+        if (key === "style") {
+            for (let styleName in newProps.style) {
+                el.style[styleName] = newProps.style[styleName];
+            }
+        } else if (key === "class") {
+            el.className = newProps.class;
+        }
+    }
 }
