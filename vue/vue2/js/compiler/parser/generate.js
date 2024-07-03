@@ -16,7 +16,6 @@ const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g
 
 // {name:'id',value:'app'} => {id: app}
 function genProps(attrs) {
-    console.log(attrs,'attrs')
     let attrsStr = ''
 
     for (let i =0; i < attrs.length; i++) {
@@ -32,7 +31,6 @@ function genProps(attrs) {
         attrsStr += `${name}: ${JSON.stringify(value)},`
     }
 
-    console.log(attrsStr,'attrsStr')
     return `{${attrsStr.slice(0,-1)}}`
 }
 
@@ -43,7 +41,7 @@ function genNode(node) {
     } else {
         let text = node.text
         if (text) {
-            if (!defaultTagRE.test(text)) {
+            if (!defaultTagRE.test(text)) { // _v('hello {{name}} worlw {{msg}} aa) => _v(hello+_s(name)+world+_s(msg) aa)
                 // 普通文本 不带 {{}}
                 return `_v(${JSON.stringify(text)})`
             }
@@ -83,9 +81,8 @@ function genChildren(children) {
 
 export function generate(ast) {
 
-    console.log(ast,'ast’')
 
-    let code = `_c(${ast.tag}, ${ast.attrs.length ? genProps(ast.attrs) : 'undefined'}, ${ast.children.length ? genChildren(ast.children) : 'undefined'})`
+    let code = `_c('${ast.tag}', ${ast.attrs.length ? genProps(ast.attrs) : 'undefined'}, ${ast.children.length ? genChildren(ast.children) : 'undefined'})`
 
     return code
 }

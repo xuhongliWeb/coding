@@ -17,7 +17,6 @@ export function compileToFunctions(template) {
     let code = generate(ast)
 
 
-    console.log(code);
 
     // 4. 将render 函数转化为函数
 
@@ -26,11 +25,8 @@ export function compileToFunctions(template) {
     //     console.log(a,b)
     // }
 
-    // 限制取出范围- 通过 with
-
+    // 限制取出范围- 通过 with, 之后通过改变this 环境进行取值
     let render = new Function("with(this){return " + code + "}")
-
-
     return render
 }
 

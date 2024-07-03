@@ -1,11 +1,13 @@
 
 
-import { initLifecycle } from "./liftcycle.js";
+import { initLifecycle,mountComponent } from "./liftcycle.js";
 import { initState } from "./state.js";
 import { query,getOuterHTML } from "../utils/index.js";
 import { compileToFunctions } from "../compiler/index.js";
 let uid = 0;
 export function initMixin(Vue) {
+
+
     // 原型上添加 _init 方法
     Vue.prototype._init = function (options) {
 
@@ -59,7 +61,7 @@ export function initMixin(Vue) {
         const options = vm.$options
 
         el = query(el)
-
+        vm.$el = el
         // 判断选项中是否传入 render 方法
 
         if (!options.render) {
@@ -73,9 +75,12 @@ export function initMixin(Vue) {
             // 转 render
 
             const render = compileToFunctions(template);
+            options.render = render // 得到函数
         }
         // 有 render 
 
+        // 挂载组件
 
+        mountComponent(vm, el)
     }
 }

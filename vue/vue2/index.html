@@ -8,7 +8,11 @@
 <body>
     <div style="color: red;" id="app">
         hello
-        <span class="test">{{msg}} {{age}} world</span>
+        <span class="test"> {{age}} world</span>
+
+        <ul>
+            <li v-for="item in list">{{item}}</li>
+        </ul>
     </div>
     <script type="module">
         import Vue from './js/instance/index.js'
