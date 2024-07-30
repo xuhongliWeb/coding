@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-</head>
-<body>
-    <div style="color: red;" id="app">
-        hello
-        <span class="test"> {{age}} world</span>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+    </head>
+    <body>
+        <div style="color: red" id="app">
+            hello
+            <span class="test"> {{age}} world</span>
 
-        <ul>
-            <li>{{age}}</li>
-            <li>{{msg}}</li>
-        </ul>
-    </div>
-    <script type="module">
-        import Vue from './js/instance/index.js'
-        let vm = new Vue({
-            el: '#app',
-            data: {
-                todos: [{
-                text: '学习 JavaScript'
-            }, {
-                text: '学习 Vue'
-            }, {
-                text: '整个牛项目'
-            }],
-                msg: 'msg123',
-                age: 21
-            }
-        })
-        vm.msg = '我改变了'
-    </script>
-</body>
+            <ul>
+                <li>{{age}}</li>
+                <li>{{msg}}</li>
+            </ul>
+        </div>
+        <script type="module">
+            import Vue from "./js/instance/index.js";
+            Vue.mixin({
+                created:function a() {
+                    console.log("mixin-a created");
+                }
+            })
+            // Vue.mixin({
+            //     created:function b() {
+            //         console.log("mixin-b created");
+            //     },
+            // })
+            let vm = new Vue({
+                el: "#app",
+                data() {
+                    return {
+                        todos: [
+                            {
+                                text: "学习 JavaScript",
+                            },
+                            {
+                                text: "学习 Vue",
+                            },
+                            {
+                                text: "整个牛项目",
+                            },
+                        ],
+                        msg: "msg123",
+                        age: 21,
+                    };
+                },
+
+                created() {
+                    console.log("created");
+                },
+            });
+            vm.msg = "我改变了";
+        </script>
+    </body>
 </html>

@@ -1,8 +1,8 @@
 
 
-import { initLifecycle,mountComponent } from "./liftcycle.js";
+import { callHook, initLifecycle,mountComponent } from "./liftcycle.js";
 import { initState } from "./state.js";
-import { query,getOuterHTML } from "../utils/index.js";
+import { query,getOuterHTML, mergeOptions } from "../utils/index.js";
 import { compileToFunctions } from "../compiler/index.js";
 let uid = 0;
 export function initMixin(Vue) {
@@ -16,9 +16,7 @@ export function initMixin(Vue) {
         vm._uid = uid++;
 
         // 将 options 挂载到 vm 上
-
-        vm.$options = options; // TODO 合并配置 
-
+        vm.$options = mergeOptions(vm.constructor.options,options); // TODO 合并配置 
         // 初始化生命周期 $parent children refs root 等
 
         initLifecycle(vm);
@@ -28,8 +26,11 @@ export function initMixin(Vue) {
         // 1. data 生成响应式状态，对应的 dep对象
         // 2. watch 生成和watcher 对应， 并于数据data 的 dep 产生依赖关系
         // 3. computed 生成 getter setter 生成一个watcher ， 但不执行， 返回一个闭包
+
         // 4.methods 对象，生成闭包，先不执行
+        callHook(vm, 'beforeCreated')
         initState(vm);
+        callHook(vm, 'created')
 
         // 挂载组件，带模板编译
 
@@ -51,7 +52,6 @@ export function initMixin(Vue) {
      * 然后将ast 树转换为render 函数， 字符拼接， 字符串变函数
      * 调用render 函数，得到vnode 虚拟dom, 根据虚拟dom 生成真实dom,插入到el 元素中
      */
-
 
     Vue.prototype.$mount = function (el) {
         // 挂载操作
@@ -82,5 +82,6 @@ export function initMixin(Vue) {
         // 挂载组件
 
         mountComponent(vm, el)
+
     }
 }
