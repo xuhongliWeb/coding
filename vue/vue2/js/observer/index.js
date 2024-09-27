@@ -17,7 +17,7 @@ class Observer {
             protoAugment(value, arrayMethods, arrayKeys);
 
             /*如果是数组则需要遍历数组的每一个成员进行observe*/
-            observeArray(value);
+            this.observeArray(value);
         } else {
             this.walk(value);
         }
@@ -32,6 +32,12 @@ class Observer {
             defineReactive(data, key, val);
         }
     }
+// 对数组的没个成员进行绑定
+    observeArray(items) {
+        for (let i = 0, l = items.length; i < l; i++) {
+            observe(items[i]);
+        }
+    }
 }
 
 // 直接覆盖原型的方法来修改目标对象
@@ -40,12 +46,6 @@ function protoAugment(target, src) {
     target.__proto__ = src;
 }
 
-// 对数组的没个成员进行绑定
-function observeArray(items) {
-    for (let i = 0, l = items.length; i < l; i++) {
-        observe(items[i]);
-    }
-}
 
 export function observe(value, assRootData) {
     if (!isObject(value)) {
@@ -73,7 +73,7 @@ export function observe(value, assRootData) {
 export function defineReactive(obj, key, val) {
     let dep = new Dep();
 
-    // 如果子元素是数组， 跑到O
+    // 如果子元素是数组， 或 object 则进行观察
     let childOb = observe(val);
     // 获取 defineProperty 的 getter 和 setter
     // getOwnPropertyDescriptor 返回接存在于对象上而不在对象的原型链中的属性
@@ -93,7 +93,11 @@ export function defineReactive(obj, key, val) {
             if (Dep.target) {
                 dep.depend();
             }
-
+            // 如果有子元素，则进行依赖收集
+            if (childOb) {
+                childOb.dep.depend();
+            }
+            console.log(childOb,'childOb');
             return value;
         },
         set: function reactiveSetter(newVal) {

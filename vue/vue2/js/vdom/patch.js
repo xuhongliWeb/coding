@@ -6,6 +6,7 @@ export function path(oldVnode, vnode) {
     const parentElm = oldVnode.parentNode; // 获取父节点
     parentElm.insertBefore(el, oldVnode.nextSibling); // 插入到老节点的后面
     parentElm.removeChild(oldVnode); // 删除老节点
+    return el
 }
 
 function createElm(vnode) { // 创建真实节点
