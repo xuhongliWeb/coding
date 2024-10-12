@@ -7,7 +7,6 @@
     </head>
     <body>
         <div style="color: red" id="app">
-
             <ul>
                 {{todos}}
             </ul>
@@ -15,10 +14,10 @@
         <script type="module">
             import Vue from "./js/instance/index.js";
             Vue.mixin({
-                created:function a() {
+                created: function a() {
                     console.log("mixin-a created");
-                }
-            })
+                },
+            });
             // Vue.mixin({
             //     created:function b() {
             //         console.log("mixin-b created");
@@ -47,6 +46,9 @@
                 created() {
                     console.log("created");
                 },
+                updated() {
+                    console.log("updated");
+                }
             });
 
             setTimeout(() => {
@@ -54,13 +56,27 @@
                 vm.todos.push({
                     text: "新添加的",
                 });
-                // vm._update(vm._render()) // 值改变后重新调用update render 方法 暴力创建更新
+                vm.todos.push({
+                    text: "新添加的",
+                });
+                vm.todos.push({
+                    text: "新添加的",
+                });
+                vm.todos.push({
+                    text: "新添加的",
+                });
+                console.log(vm.$el.innerHTML, "11111");
 
+                vm.$nextTick(() => {
+                    console.log("nextTick");
+                    console.log(vm.$el.innerHTML, "22222222");
+                });
+                // vm._update(vm._render()) // 值改变后重新调用update render 方法 暴力创建更新
 
                 // vue 源码中 数据变化 自动调用 vm._update(vm._render()) 就可以了
                 // vue 更新策略是以组件为单位的。 给每个组件都增加了一个watcher对象，
                 // 每当数据变化，会通知watcher对象，watcher对象会通知组件更新 (渲染watcher)
-            }, 2000)
+            }, 2000);
         </script>
     </body>
 </html>

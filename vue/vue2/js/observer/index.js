@@ -97,7 +97,6 @@ export function defineReactive(obj, key, val) {
             if (childOb) {
                 childOb.dep.depend();
             }
-            console.log(childOb,'childOb');
             return value;
         },
         set: function reactiveSetter(newVal) {

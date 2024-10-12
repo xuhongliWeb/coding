@@ -56,3 +56,9 @@ export const arrayMethods = Object.create(arrayProto);
       return result
     })
   })
+
+
+  // 1. data 中取值触发 get 方法 希望让当前数组记住这个渲染watcher
+  // 2. 给所有的对象类型都增加dep 属性  ,dep
+  // 3. 当页面对arr 取值时 让这个watcher 记住dep。childDeps
+  // 4. 当数组修改时，让dep通知所有watcher更新 调用劫持的7个方法

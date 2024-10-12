@@ -1,4 +1,4 @@
-import { noop } from "../utils/index.js";
+import { nextTick, noop } from "../utils/index.js";
 import { observe } from "../observer/index.js";
 
 const sharedPropertyDefinition = {
@@ -67,4 +67,13 @@ function initData (vm) {
         proxy(vm, '_data', keys[i])
     }
     observe(data);
+}
+
+// 初始化用户nextTick 的回调
+
+export function stateMixin(vm) {
+    vm.prototype.$nextTick = function (cb){
+        console.log('用户nextTick: ', cb);
+        return nextTick(cb);
+    };
 }

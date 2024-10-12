@@ -120,3 +120,46 @@ export function mergeOptions(parent, child) {
 
     return options;
 }
+
+let timeFunc = Promise.resolve();
+let pending = false;
+let callbacks = [];
+
+function flushCallbacks() {
+    const copies = callbacks.slice(0);
+    copies.forEach((cb) => cb());
+    pending = false;
+    callbacks = [];
+    callbacks.length = 0;
+
+
+}
+
+if (Promise) {
+    timeFunc = () => {
+        Promise.resolve().then(flushCallbacks);
+    };
+}else if (MutationObserver) {
+    const observe = new MutationObserver(flushCallbacks); // 
+    const textNode = document.createTextNode(1); // 先创建一个文本节点
+    observe.observe(textNode, { characterData: true }); // 观测
+    timeFunc = () => { // 调用时改变节点并触发回调
+        textNode.data = (textNode.data + 1) % 2;
+    };
+}else if (setImmediate) {
+    timeFunc = () => {
+        setImmediate(flushCallbacks);
+    };
+} else {
+    timeFunc = () => {
+        setTimeout(flushCallbacks, 0);
+    };
+}
+export function nextTick(cb) {
+    callbacks.push(cb);
+    if (!pending) {
+        timeFunc()
+        pending = true;
+    }
+    return Promise.resolve().then(cb);
+}
