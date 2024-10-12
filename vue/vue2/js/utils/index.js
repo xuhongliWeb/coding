@@ -112,8 +112,6 @@ export function mergeOptions(parent, child) {
         if (strats[key]) {
             options[key] = strats[key](parent[key], child[key]);
         } else {
-            console.log("默认合并");
-
             options[key] = child[key] || parent[key];
         }
     }

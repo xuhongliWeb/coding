@@ -15,27 +15,45 @@ class Watcher {
         this.vm = vm;
         this.exprOrFn = exprOrFn;
         this.cb = cb;
+        this.user = options.user; // 用户 watch
         this.options = options;
         this.deps = []; // watcher 存放 dep
         this.depsId = new Set(); // dep id
         this.id = id++; // watcher id 唯一标识
         if (typeof exprOrFn === "function") {
             this.getter = exprOrFn;
+        } else {
+            // exprOrFn 是字符串 a.a.a || msg 等情况
+            this.getter = function () {
+                let path = exprOrFn.split(".");
+                let obj = vm;
+                for (let i = 0; i < path.length; i++) {
+                    obj = obj[path[i]];
+                }
+
+                return obj;
+            };
         }
 
-        // 默认调用 get 方法
+        // 默认调用 get 方法, 进行取值将结果保留
 
-        this.get();
+        this.value = this.get();
     }
 
     get() {
         // debugger
         pushTarget(this); // 当前watcher 实例 添加到 Dep.target
-        this.getter(); // 调用 getter 方法 渲染页面 render 方法 with(vm){return _c('div',{id:'app'},_v('hello'))}
+        const result = this.getter(); // 调用 getter 方法 渲染页面 render 方法 with(vm){return _c('div',{id:'app'},_v('hello'))}
         popTarget();
+        return result;
     }
     run() {
-        this.get();
+        const newValue = this.get();
+        const oldValue = this.value;
+        this.value = newValue; // 更新老值
+        if (this.user) {
+            this.cb.call(this.vm, newValue, oldValue);
+        }
     }
     update() {
         // this.get()
@@ -60,7 +78,9 @@ function flushSchedulerQueue() {
     // 刷新队列
     queus.forEach((watcher) => {
         watcher.run();
-        watcher.cb();
+        if (!watcher.user) {
+            watcher.cb(); // 触发回调 更新页面
+        }
     });
     pending = false;
     queus = [];

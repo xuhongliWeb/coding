@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+    </head>
+    <body>
+        <div style="color: red" id="app">
+            <ul>
+                {{todos}}
+            </ul>
+        </div>
+        <script type="module">
+            import Vue from "./js/instance/index.js";
+            let vm = new Vue({
+                el: "#app",
+                data() {
+                    return {
+                        a:{a:{a:{a:1}}},
+                        todos: [
+                            {
+                                text: "学习 JavaScript",
+                            },
+                            {
+                                text: "学习 Vue",
+                            },
+                            {
+                                text: "整个牛项目",
+                            },
+                        ],
+                        msg: "msg123",
+                        age: 21,
+                    };
+                },
+                // watch 调用方式
+                /**
+                 * 1. 监听对象
+                 * 2. 监听数组
+                 * 3. key value 方式
+                 * 4. $$watch (内部实现)
+                 */
+                watch: {
+                    // msg: function (newVal, oldVal) {
+                    //     console.log("msg-page", newVal, oldVal);
+                    // },
+                    'a.a.a.a': {
+                        handler: function (newVal, oldVal) {
+                            console.log("msg-page-aaaaa", newVal, oldVal);
+                        },
+                        deep: true,
+                        immediate:true
+                    }
+                },
+                created() {
+                    console.log("created");
+                },
+                updated() {
+                    console.log("updated");
+                }
+            });
+
+            vm.msg = "我改变了msg";
+
+            vm.a.a.a.a = 222;
+            setTimeout(() => {
+            vm.msg = "我改变了msg2222";
+
+            },2222)
+        </script>
+    </body>
+</html>
