@@ -61,6 +61,7 @@ const LIFTCYCLE_HOOKS = [
     "beforeCreated",
     "created",
     "beforeMount",
+    "computed",
     "mounted",
     "beforeUpdate",
     "updated",
@@ -73,7 +74,7 @@ const strats = {
         return childVal;
     },
     methods: {},
-    computed: {},
+    computed: function () {},
     components: {},
     directives: {},
 };
@@ -111,6 +112,7 @@ export function mergeOptions(parent, child) {
     function mergeField(key) {
         if (strats[key]) {
             options[key] = strats[key](parent[key], child[key]);
+
         } else {
             options[key] = child[key] || parent[key];
         }

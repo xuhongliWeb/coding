@@ -2,6 +2,14 @@ import { nextTick, noop } from "../utils/index.js";
 import { observe } from "../observer/index.js";
 import Watcher from "../observer/watcher.js";
 
+
+let computedDefinition = {
+    enumerable: true,
+    configurable: true,
+    get: noop,
+    set: noop,
+}
+
 const sharedPropertyDefinition = {
     enumerable: true,
     configurable: true,
@@ -38,7 +46,10 @@ export function initState(vm) {
     if (opts.data) {
         initData(vm);
     }
-
+    // 初始化 computed
+    if (opts.computed) {
+        initComputed(vm);
+    }
     // watch
 
     if (opts.watch) {
@@ -71,6 +82,32 @@ function initData(vm) {
     observe(data);
 }
 
+// 初始化 computed
+
+function initComputed(vm) {
+    // 1. 需要有watcher 2. 通过defineProperty 给 key 添加 getter setter 3. dirty
+    const computed = vm.$options.computed[0];
+    const watchers = (vm._computedWatchers = {});
+    Object.keys(computed).forEach((key) => {
+        const userDef = computed[key];
+        const getter = typeof value === "function" ? userDef : userDef.get; // watcher 使用
+
+        defineComputed(vm,key,userDef)
+
+    })
+}
+
+// 
+function defineComputed(target,key,userDef){ // 这样写没缓存
+    if (typeof userDef === "function") {
+        computedDefinition.get = userDef
+    }else {
+        computedDefinition.get = userDef.get
+        computedDefinition.set = userDef.set
+
+    }
+    Object.defineProperty(target,key,computedDefinition)
+}
 // 初始化用户nextTick 的回调
 
 export function stateMixin(vm) {

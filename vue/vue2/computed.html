@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+    </head>
+    <body>
+        <div style="color: red" id="app">
+            <ul>
+                {{todos}}
+            </ul>
+        </div>
+        <script type="module">
+            /**
+             * couputed 特性
+             * 1. 只有get 没有set 的时候，是单向的，数据变化，不会影响到计算属性
+             * 2. 有set 的时候，是双向的，数据变化，计算属性也会变化
+             * 3. 计算属性是基于它们的依赖进行缓存的。
+             * 4. 计算属性的值会缓存，只有当依赖项发生变化时才会重新求值。
+             * 5. 计算属性默认只有getter，不过在需要时你也可以提供一个 setter。
+             * 6. 原理是通过一个变量来缓存依赖项的值，通过 dirty 标志变量来判断依赖项的依赖值是否发生了改变。
+             * 7. 计算属性是基于它们的依赖进行缓存的。只在相关依赖发生改变时它们才会重新求值。
+             **/
+            import Vue from "./js/instance/index.js";
+            let vm = new Vue({
+                el: "#app",
+                data() {
+                    return {
+                        firstName: "Foo",
+                        lastName: "Bar",
+                        a:{a:{a:{a:1}}},
+                        todos: [
+                            {
+                                text: "学习 JavaScript",
+                            },
+                            {
+                                text: "学习 Vue",
+                            },
+                            {
+                                text: "整个牛项目",
+                            },
+                        ],
+                        msg: "msg123",
+                        age: 21,
+                    };
+                },
+                /** computed 的基本是使用
+                 * 1. get set
+                 * 2. key value 方式
+                 */
+                 computed: {
+                    fullName () {
+                        console.log('run');
+                        return this.firstName + "-" + this.lastName;
+                    },
+
+                    // fullName: {
+                    //     get() {
+                    //         return this.firstName + "-" + this.lastName;
+                    //     },
+                    //     set() {}
+                    // }
+                },
+            });
+
+            vm.fullName
+            vm.fullName
+        </script>
+    </body>
+</html>
