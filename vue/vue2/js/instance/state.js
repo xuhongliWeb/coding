@@ -1,14 +1,14 @@
 import { nextTick, noop } from "../utils/index.js";
 import { observe } from "../observer/index.js";
 import Watcher from "../observer/watcher.js";
-
+import Dep from "../observer/dep.js";
 
 let computedDefinition = {
     enumerable: true,
     configurable: true,
     get: noop,
     set: noop,
-}
+};
 
 const sharedPropertyDefinition = {
     enumerable: true,
@@ -90,23 +90,41 @@ function initComputed(vm) {
     const watchers = (vm._computedWatchers = {});
     Object.keys(computed).forEach((key) => {
         const userDef = computed[key];
-        const getter = typeof value === "function" ? userDef : userDef.get; // watcher 使用
+        const getter = typeof userDef === "function" ? userDef : userDef.get; // watcher 使用
 
-        defineComputed(vm,key,userDef)
-
-    })
+        // 为每个computed 都要创建一个watcher
+        watchers[key] = new Watcher(vm, getter, noop, { lazy: true });
+        defineComputed(vm, key, userDef);
+    });
 }
 
-// 
-function defineComputed(target,key,userDef){ // 这样写没缓存
+//
+function defineComputed(target, key, userDef) {
+    // 这样写没缓存
     if (typeof userDef === "function") {
-        computedDefinition.get = userDef
-    }else {
-        computedDefinition.get = userDef.get
-        computedDefinition.set = userDef.set
-
+        computedDefinition.get = createComputedGetter(key);
+    } else {
+        computedDefinition.get = createComputedGetter(key);
+        computedDefinition.set = userDef.set;
     }
-    Object.defineProperty(target,key,computedDefinition)
+    Object.defineProperty(target, key, computedDefinition);
+}
+
+function createComputedGetter(key) {
+    return function computedGetter() {
+        const watcher = this._computedWatchers[key];
+        if (watcher) {
+            if (watcher.dirty) {
+                // dirty 如果是脏的，就重新计算
+                watcher.evaluate();
+            }
+            if (Dep.target) {
+                watcher.depend();
+            }
+        }
+        
+        return watcher.value;
+    };
 }
 // 初始化用户nextTick 的回调
 
@@ -139,14 +157,14 @@ function initWatch(vm, watch) {
 }
 
 /**
- * watch 也是一个watcher 会默认存一个老值，每次更新数据会再去拿到一个新值， 对比传入的回调，判断是否更新 触发回调， 取值之前， 会把用户watcher 存起来
- * @param {*} vm 
+ * watch 也是一个watcher 会默认存一个老值，每次更新数据会再去拿到一个新值， 
+ * 对比传入的回调，判断是否更新 触发回调， 取值之前， 会把用户watcher 存起来
+ * @param {*} vm
  * @param {*} key 字符串或Fn
- * @param {*} handler 
- * @returns 
+ * @param {*} handler
+ * @returns
  */
 function createWatcher(vm, key, handler) {
-    
     let options;
     // 'msg': vm的methods中的方法
     if (typeof handler === "string") {
@@ -156,5 +174,5 @@ function createWatcher(vm, key, handler) {
         options = handler;
         handler = handler.handler;
     }
-    return vm.$watch(key, handler,options);
+    return vm.$watch(key, handler, options);
 }

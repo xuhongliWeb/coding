@@ -1,5 +1,5 @@
 // 把属性和watcher关联起来
-// 多对多关系 一个属性有一个dep是用来收集watcher 的 
+// 多对多关系 一个属性有一个dep是用来收集watcher 的
 // dep 可以存放多个watcher
 // 一个watcher 可以对应多个dep
 
@@ -31,9 +31,8 @@ export default class Dep {
     }
     // 依赖收集 当存在 Dep.target 的时候，将 Dep.target 添加到 subs 中
     depend() {
-        // dep 和 watcher 是多对多的关系 目的是收集所有依赖 避免重复收集 
+        // dep 和 watcher 是多对多的关系 目的是收集所有依赖 避免重复收集
         Dep.target && Dep.target.addDep(this); // 双向记忆 避免重复收集
-       
     }
 
     // 通知所有订阅者
@@ -45,23 +44,23 @@ export default class Dep {
         }
     }
 }
+// 既要收集渲染Watcher 也要收集计算属性的watcher 还有 nextTick watcher 和 watch 等
+// 所以改变target 都要放到栈里
 
 Dep.target = null;
-const targetStack = [];
+const targetStack = []; // 渲染 watcher 计算watcher 等
 
 export function pushTarget(_target) {
-    if (Dep.target) {
-        targetStack.push(Dep.target);
-    }
-
+    targetStack.push(_target);
+    console.log('pushTarget: ', targetStack);
     Dep.target = _target;
 }
- 
-export function popTarget() {
-    Dep.target = targetStack.pop();
-    Dep.target = null
-}
 
+export function popTarget() {
+    targetStack.pop();
+    console.log('popTarget: ', targetStack);
+    Dep.target = targetStack[targetStack.length - 1];
+}
 
 /**
  * 1. 在数据劫持的时候 定义defineProperty 的时候已经给每个属性增加了一个 dep

@@ -8,7 +8,7 @@
     <body>
         <div style="color: red" id="app">
             <ul>
-                {{todos}}
+                {{fullName}}
             </ul>
         </div>
         <script type="module">
@@ -64,8 +64,12 @@
                 },
             });
 
-            vm.fullName
-            vm.fullName
+            console.log(' vm.fullName: ',  vm.fullName);
+            console.log(' vm.fullName: ',  vm.fullName);
+            setTimeout(() => {
+                vm.firstName = "newName"
+            }, 2000);
+         
         </script>
     </body>
 </html>
