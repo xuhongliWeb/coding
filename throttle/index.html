@@ -12,7 +12,15 @@
 </head>
 <body>
   <div id="container"></div>
-  <button id="button">点击取消debounce</button>
+  <button id="button">点击取消throttle</button>
   <script src="throttle.js"></script>
+  <script>
+    const container = document.getElementById('container')
+    function move (e) {
+      container.innerHTML = `pageX: ${e.pageX}, pageY: ${e.pageY}`
+    }
+    
+    window.onmousemove = throttle3(move, 1000)
+  </script>
 </body>
 </html>
