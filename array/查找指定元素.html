@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <script>
+            const arr = [1, 2, 3, 4, 25, 2, 4532, 532, 3, 6];
+            const index = arr.findIndex((item) => {
+                return item === 3;
+            });
+            let fn = (item) => item === 3;
+            let ind = arr.findIndex(fn);
+            // console.log(index);
+
+            // #实现 findIndex
+
+            function findIndex(arr, pre, context) {
+                console.log("context: ", context);
+                for (let i = 0; i < arr.length; i++) {
+                    if (pre.call(context, arr[i], i, arr)) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            // console.log(
+            //     findIndex(arr, function (item, i, array) {
+            //         return item === 3;
+            //     })
+            // );
+
+            // # lastIndex
+
+            function findLastIndex(arr, pre, context) {
+                for (let i = arr.length - 1; i >= 0; i--) {
+                    if (pre.call(context, arr[i], i, arr)) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            // console.log(
+            //     findLastIndex(arr, function (item, i, array) {
+            //         return item === 3;
+            //     })
+            // );
+
+            // # 结合
+
+            function createIndexFinder(dir) {
+                return function (array, predicate, context) {
+                    var length = array.length;
+                    var index = dir > 0 ? 0 : length - 1;
+
+                    for (; index >= 0 && index < length; index += dir) {
+                        if (predicate.call(context, array[index], index, array))
+                            return index;
+                    }
+
+                    return -1;
+                };
+            }
+
+            var findIndex = createIndexFinder(1);
+            var findLastIndex = createIndexFinder(-1);
+
+            // console.log(' findIndex(arr,(item => item === 3)): ',  findIndex(arr,(item => item === 3)));
+            // console.log(' findLastIndex(arr,(item => item === 3)): ',  findLastIndex(arr,(item => item === 3)));
+
+            // # sortedIndex 在一个排序好的数组中找到value 对应的位置， 保证插入数组后依然保持有序状态
+
+            let arr2 = [10, 20, 30];
+            // [10,20,30],25 => [10,20,25,30]
+            function sortedIndex(arr, value) {
+                let array = [...arr];
+                for (let i = 0; i < arr.length; i++) {
+                    if (arr[i] > value) {
+                        array.splice(i, 0, value);
+                        return array; // 插入后立即返回数组
+                    }
+                }
+                array.push(value); // 如果循环结束都没有插入，说明value应该添加到数组末尾
+                return array;
+            }
+
+            sortedIndex(arr2, 25);
+
+            arr.indexOf(1)
+            // # indexOf lastIndexOf
+
+            function createIndexOf(dir) {
+
+                return function (arr,target) {
+                    let len = arr.length
+                    let index = dir>0?0:len-1
+
+                    for(;index>=0 && index<len;index+=dir) {
+                        if(arr[index] === target) {
+                            return index
+                        }
+                    }
+                    return -1
+                }
+            }
+
+            const indexOOF= createIndexOf(1)
+            const lastindexOOF= createIndexOf(-1)
+            console.log('lastindexOOF([1,2,3,4],2): ', lastindexOOF([1,2,3,4],2));
+            console.log('indexOOF([1,2,3,4],2): ', indexOOF([1,2,3,4],2));
+        </script>
+    </body>
+</html>
