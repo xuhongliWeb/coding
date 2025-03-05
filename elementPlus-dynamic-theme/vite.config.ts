@@ -10,6 +10,7 @@ export default defineConfig({
     AutoImport({
       resolvers: [ElementPlusResolver()],
     }),
+    
     Components({
       resolvers: [
         ElementPlusResolver({
@@ -20,5 +21,6 @@ export default defineConfig({
   ],
   server: {
     hmr: true,
+    port: 8888
   },
 });

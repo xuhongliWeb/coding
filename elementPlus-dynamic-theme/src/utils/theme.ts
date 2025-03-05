@@ -35,7 +35,9 @@ function setStyleProperty(propName: string, value: string) {
 }
 
 function updateThemeColorVar({ colors }: Theme) {
+    console.log('colors: ', colors);
   const isDark = useDark();
+  console.log('isDark: ', isDark);
 
   // 遍历当前主题色，生成混合色，并更新到css变量（tailwind + elementPlus）
   for (const brand in colors) {
