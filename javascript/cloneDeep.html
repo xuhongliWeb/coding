@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深拷贝</title>
+</head>
+<body>
+    <script>
+        // 用例
+        const obj = {
+            a: 1,
+            b: {
+                b1: 1,
+                b2: 2,
+            },
+            c: [1, 2, 3],
+            d: function () {
+                console.log('d');
+            },
+            e: new Date(),
+            f: /\d+/,
+            g: new RegExp('\\d+'),
+            h: new Map(),
+            i: new Set()
+        }
+
+        const objSorce = {
+            a:1,
+            b:2,
+            c: [[]],
+            d:{
+                a:1,
+                b:2,
+                c:function () {
+                    console.log('d');
+                }
+            },
+            e: new Date(),
+            f: /\d+/,
+            g: new RegExp('\\d+'),
+            h: new Map(),
+            i: new Set(),
+            map: new Map([[1, new Date()]]),
+            set: new Set([new Date()]),
+            uu:undefined,
+            nn:null,
+            sy:Symbol('1')
+        }
+        /**
+         * 
+         * @param {*} obj 
+         * JSON.parse(JSON.stringify(obj))的缺点
+         * 只能拷贝数组和对像，对map,set,日期，正则不行
+         * 循环引用会报错
+         * @returns 
+         */
+        function deepCloneJson(obj) {
+            if (typeof obj !== 'object') {
+                return obj;
+            }
+            return JSON.parse(JSON.stringify(obj))
+        }
+
+        // objSorce.d = objSorce // 循环引用
+        const test = deepCloneJson(objSorce)
+        // test.c.push(1)
+        // test.d = test
+
+        /**
+         * @param {*} obj 
+         * @param {*} hashMap
+         * 1.如嵌套的map,set 并且这些数据结构中存储了特殊的类型可能会拷贝失败
+         * 2.symbol 拷贝失败
+         * 3.函数拷贝失败
+         * 6.不可枚举属性
+         * @returns 
+         */
+        function deepClone(obj,hashMap = new WeakMap()) {
+            if (typeof obj !== 'object' || obj=== null ) {
+                return obj;
+            }
+
+            // 循环引用问题
+            if (hashMap.get(obj)) {
+                return hashMap.get(obj)
+            }
+
+            let cloneObj
+            if (obj instanceof Date) {
+                cloneObj = new Date(obj)
+            }else if (obj instanceof RegExp) {
+                cloneObj = new RegExp(obj)
+            }else if (obj instanceof Set) {
+                cloneObj = new Set(obj)
+            }else if (obj instanceof Map) {
+                cloneObj = new Map(obj)
+            }else {
+                cloneObj = new obj.constructor()
+            }
+
+
+            hashMap.set(obj,cloneObj)
+
+            for (const key in obj) {
+                if (Object.hasOwnProperty.call(obj, key)) {
+                    cloneObj[key] = deepClone(obj[key],hashMap)
+                }
+            }
+
+            return cloneObj
+        }
+
+        const test2 = deepClone(objSorce)
+        console.log('test2: ', test2);
+
+        function deepClone2(obj,hashMap = new WeakMap()) {
+            if (typeof obj !== 'object' || obj=== null ) {
+                return obj;
+            }
+
+            if (typeof structuredClone === 'function') {
+                return structuredClone(obj)
+            }
+
+            if (hashMap.get(obj)) {
+                return hashMap.get(obj)
+            }
+
+            let cloneObj
+
+            if (obj instanceof Date) {
+                cloneObj = new Date(obj)
+            }else if (obj instanceof RegExp) {
+                cloneObj = new RegExp(obj)
+            }else if (obj instanceof Set) {
+                cloneObj = new Set(obj)
+            }else if (obj instanceof Map) {
+                cloneObj = new Map(obj)
+            }else {
+                cloneObj = new obj.constructor()
+            }
+
+            let symbols = Object.getOwnPropertySymbols(obj)
+            let keys = Object.getOwnPropertyNames(obj)
+
+
+            keys.concat(symbols).forEach(key => {
+                let value = obj[key]
+                if (typeof value === 'object' && value !== null) {
+                    value = deepClone2(value,hashMap)
+                }
+                cloneObj[key] = value
+            })
+
+            return cloneObj
+        }
+
+    </script>
+</body>
+</html>
